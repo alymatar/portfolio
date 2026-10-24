@@ -64,7 +64,7 @@ pip install -r requirements-dev.txt
 pytest -v
 ```
 
-The tests check that the home page and its sections render, every project appears, the photo and CV are served, the API returns the projects, the health check works, and unknown pages return 404.
+The tests check that the home page and its sections render, every project appears, the profile and graduation photos and the CV are served, the API returns the projects, the health check works, and unknown pages return 404.
 
 ## Edit the content
 
@@ -73,6 +73,7 @@ Everything on the page comes from **`content.yaml`**: name, headline, About, ski
 - Content is loaded once when the app starts, so **restart** the app after editing (`docker compose up --build`, or just save with `uvicorn --reload` running).
 - To add a project, copy one of the entries under `projects:`. `status` is one of `public` (shows a "View code" button when `repo_url` is set), `private` (client work, shows `note`) or `coming_soon`.
 - The photo is `app/static/img/aly-matar.webp` (with a `.jpg` fallback); replace both files to change it.
+- The graduation photo in Education is `app/static/img/aly-graduation.webp` (with a `.jpg` fallback); its paths and alt text are under `education[].photo` in `content.yaml`.
 - The CV is `app/static/Aly_Matar_CV.pdf`; replace the file to update it.
 - If the YAML is invalid or a required field is missing, the app tells you which field on startup.
 
@@ -93,7 +94,7 @@ portfolio/
 │   └── static/
 │       ├── css/style.css    # all styles, light and dark theme
 │       ├── js/theme.js      # theme toggle (the only JavaScript)
-│       ├── img/             # profile photo
+│       ├── img/             # profile and graduation photos
 │       ├── favicon.svg
 │       └── Aly_Matar_CV.pdf
 ├── tests/test_app.py        # pytest tests

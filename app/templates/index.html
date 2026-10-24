@@ -109,11 +109,19 @@
     <div>
       <h2>Education</h2>
       {% for e in c.education %}
-      <div class="card">
-        <h3>{{ e.degree }}</h3>
-        <p class="school">{{ e.school }}</p>
-        <p class="period">{{ e.period }}</p>
-        {% if e.details %}<p class="muted">{{ e.details }}</p>{% endif %}
+      <div class="card edu-card{% if e.photo %} has-photo{% endif %}">
+        {% if e.photo %}
+        <picture class="edu-photo">
+          {% if e.photo.webp %}<source srcset="{{ url_for('static', path=e.photo.webp) }}" type="image/webp">{% endif %}
+          <img src="{{ url_for('static', path=e.photo.jpg) }}" alt="{{ e.photo.alt }}" width="{{ e.photo.width }}" height="{{ e.photo.height }}" loading="lazy" decoding="async">
+        </picture>
+        {% endif %}
+        <div class="edu-body">
+          <h3>{{ e.degree }}</h3>
+          <p class="school">{{ e.school }}</p>
+          <p class="period">{{ e.period }}</p>
+          {% if e.details %}<p class="muted">{{ e.details }}</p>{% endif %}
+        </div>
       </div>
       {% endfor %}
     </div>

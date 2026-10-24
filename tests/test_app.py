@@ -89,3 +89,13 @@ def test_no_phone_number_on_site():
     html = client.get("/").text
     assert "+20" not in html
     assert "533 2919" not in html
+
+
+def test_graduation_photo_is_served_and_shown():
+    for path in ("/static/img/aly-graduation.webp", "/static/img/aly-graduation.jpg"):
+        response = client.get(path)
+        assert response.status_code == 200
+        assert response.headers["content-type"].startswith("image/")
+    html = client.get("/").text
+    assert "img/aly-graduation.jpg" in html
+    assert 'alt="Aly receiving his BSc diploma, Bauman MSTU Kaluga Branch"' in html

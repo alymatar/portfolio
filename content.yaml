@@ -132,6 +132,12 @@ education:
     school: "Bauman Moscow State Technical University (Kaluga Branch)"
     period: "Graduated 2026"
     details: "Relevant courses: Software Development, Web Development, Databases, OOP, Data Structures and Algorithms, Operating Systems, Computer Networks, Android Development."
+    photo:
+      jpg: "img/aly-graduation.jpg"
+      webp: "img/aly-graduation.webp"
+      alt: "Aly receiving his BSc diploma, Bauman MSTU Kaluga Branch"
+      width: 500
+      height: 625
 
 languages:
   - name: "Arabic"

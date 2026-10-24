@@ -202,6 +202,13 @@ ul { padding-left: 1.2em; }
 
 .two-col { display: grid; grid-template-columns: 1.6fr 1fr; gap: 40px; }
 .school { font-weight: 500; margin-bottom: .2em; }
+.edu-card.has-photo { display: grid; grid-template-columns: minmax(150px, 210px) 1fr; gap: 24px; align-items: start; }
+.edu-photo { display: block; margin: 0; }
+.edu-photo img {
+  display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover;
+  border-radius: calc(var(--radius) - 4px); border: 1px solid var(--border); background: var(--chip);
+}
+.edu-body > :last-child { margin-bottom: 0; }
 .lang-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
 .lang-list li { display: flex; justify-content: space-between; align-items: center; padding: 16px 20px; }
 
@@ -224,6 +231,8 @@ ul { padding-left: 1.2em; }
   .two-col { grid-template-columns: 1fr; }
 }
 @media (max-width: 560px) {
+  .edu-card.has-photo { grid-template-columns: 1fr; gap: 18px; }
+  .edu-photo { max-width: 300px; width: 100%; margin: 0 auto; }
   body { font-size: 16px; }
   .hero { padding: 44px 0 40px; }
   .section { padding: 48px 0; }

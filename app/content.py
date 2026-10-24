@@ -58,11 +58,20 @@ class Job(BaseModel):
     points: list[str] = Field(default_factory=list)
 
 
+class Photo(BaseModel):
+    jpg: str
+    webp: Optional[str] = None
+    alt: str
+    width: int
+    height: int
+
+
 class Education(BaseModel):
     degree: str
     school: str
     period: str
     details: Optional[str] = None
+    photo: Optional[Photo] = None
 
 
 class Language(BaseModel):
