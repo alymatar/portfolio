@@ -2,6 +2,8 @@
 
 [![CI](https://github.com/alymatar/portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/alymatar/portfolio/actions/workflows/ci.yml)
 
+**Live: https://alymatar.sites.tab.bot**
+
 My personal portfolio site, built as a small **FastAPI** app. I'm a junior Python backend developer, so instead of a static page I made the portfolio itself a backend project: server-rendered pages with **Jinja2**, a small **JSON API**, content validated with **Pydantic**, **pytest** tests, a **Docker** image and **GitHub Actions** CI.
 
 | Light | Dark | Mobile |
@@ -79,6 +81,16 @@ Everything on the page comes from **`content.yaml`**: name, headline, About, ski
 
 You can also point the app at another content file: `CONTENT_PATH=/path/to/content.yaml uvicorn app.main:app`.
 
+## Live site
+
+The live site at https://alymatar.sites.tab.bot is a static snapshot of this app. The export script renders the real FastAPI pages with its test client and writes the JSON API out as files:
+
+```bash
+python scripts/export_static.py   # writes dist/
+```
+
+`dist/` holds `index.html`, `404.html`, the static assets, `api/*.json` and a tiny `_worker.js` that serves `/api/health`, `/api/projects` and `/api/projects/{slug}` as JSON at the same URLs as the app. `/api/docs` is a Swagger UI page reading the exported `api/openapi.json`. The link-preview tags (`og:image`, `og:url`) use `site.url` from `content.yaml`.
+
 ## Project structure
 
 ```text
@@ -97,6 +109,7 @@ portfolio/
 │       ├── img/             # profile and graduation photos
 │       ├── favicon.svg
 │       └── Aly_Matar_CV.pdf
+├── scripts/export_static.py # builds the static snapshot for the live site
 ├── tests/test_app.py        # pytest tests
 ├── docs/                    # screenshots for this README
 ├── content.yaml             # all site text: edit this

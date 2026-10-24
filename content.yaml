@@ -2,9 +2,12 @@
 # Edit it, then restart the app (or `docker compose up --build`) to see the changes.
 
 site:
-  title: "Aly Tamer Matar · Junior Python Backend Developer"
+  title: "Aly Tamer Matar — Junior Python Backend Developer"
   description: "Portfolio of Aly Tamer Matar, a junior Python backend developer building REST APIs with Flask, FastAPI and PostgreSQL."
   source_url: "https://github.com/alymatar/portfolio"
+  # The live site. Used for absolute og:image / og:url link-preview tags.
+  url: "https://alymatar.sites.tab.bot"
+  image: "img/aly-matar.jpg"
 
 profile:
   name: "Aly Tamer Matar"

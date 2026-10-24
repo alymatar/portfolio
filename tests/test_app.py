@@ -99,3 +99,27 @@ def test_graduation_photo_is_served_and_shown():
     html = client.get("/").text
     assert "img/aly-graduation.jpg" in html
     assert 'alt="Aly receiving his BSc diploma, Bauman MSTU Kaluga Branch"' in html
+
+
+def test_link_preview_tags_use_the_live_url():
+    html = client.get("/").text
+    site = load_content().site
+    assert f'<meta property="og:title" content="{escape(site.title)}">' in html
+    assert f'content="{site.url}/static/{site.image}"' in html
+
+
+def test_static_export(tmp_path):
+    import json
+
+    from scripts.export_static import export
+
+    out = export(tmp_path / "site")
+    for name in ("index.html", "404.html", "_worker.js", "tab-site.json", "static/Aly_Matar_CV.pdf",
+                 "api/health.json", "api/projects.json", "api/docs/index.html"):
+        assert (out / name).is_file(), name
+    index = (out / "index.html").read_text(encoding="utf-8")
+    assert "http://testserver" not in index
+    assert 'href="/static/Aly_Matar_CV.pdf"' in index
+    projects = json.loads((out / "api/projects.json").read_text(encoding="utf-8"))
+    for project in projects:
+        assert (out / "api/projects" / f"{project['slug']}.json").is_file()

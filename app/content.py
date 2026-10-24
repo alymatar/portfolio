@@ -18,6 +18,10 @@ class Site(BaseModel):
     title: str
     description: str
     source_url: Optional[str] = None
+    # Public address of the live site, used for absolute link-preview URLs.
+    url: Optional[str] = None
+    # Link-preview image, relative to app/static/.
+    image: Optional[str] = None
 
 
 class Profile(BaseModel):
