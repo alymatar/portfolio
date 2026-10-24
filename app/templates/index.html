@@ -23,16 +23,16 @@
     </div>
     <div class="terminal" aria-label="Example request to this site's API">
       <div class="terminal-bar"><span></span><span></span><span></span><em>this site has an API</em></div>
-<pre><code><span class="t-prompt">$</span> curl /api/health
+<pre><code><span class="t-prompt">$</span> curl /api/health.json
 {"status": "ok", "version": "{{ version }}"}
 
-<span class="t-prompt">$</span> curl /api/projects
+<span class="t-prompt">$</span> curl /api/projects.json
 [
   {"slug": "{{ c.projects[0].slug }}",
    "tags": ["Flask", "JWT", ...]},
   ...
 ]</code></pre>
-      <a class="terminal-link" href="/api/projects">Try it: /api/projects →</a>
+      <a class="terminal-link" href="/api/projects.json">Try it: /api/projects.json →</a>
     </div>
   </div>
 </section>
@@ -63,12 +63,11 @@
     <h2>Projects</h2>
     <div class="projects-grid">
       {% for p in c.projects %}
-      <article class="card project-card{% if p.status == 'coming_soon' %} coming-soon{% endif %}">
+      <article class="card project-card">
         <div class="project-head">
           <h3>{{ p.title }}</h3>
           {% if p.status == "public" %}<span class="badge badge-public">Open source</span>
-          {% elif p.status == "private" %}<span class="badge">Client work</span>
-          {% else %}<span class="badge badge-soon">Coming soon</span>{% endif %}
+          {% else %}<span class="badge">Client work</span>{% endif %}
         </div>
         {% if p.period %}<p class="period">{{ p.period }}</p>{% endif %}
         <p>{{ p.summary }}</p>

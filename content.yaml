@@ -5,9 +5,10 @@ site:
   title: "Aly Tamer Matar — Junior Python Backend Developer"
   description: "Portfolio of Aly Tamer Matar, a junior Python backend developer building REST APIs with Flask, FastAPI and PostgreSQL."
   source_url: "https://github.com/alymatar/portfolio"
-  # The live site. Used for absolute og:image / og:url link-preview tags.
-  url: "https://alymatar.sites.tab.bot"
-  image: "img/aly-matar.jpg"
+  # The live site (GitHub Pages). Used for the canonical link and the og:image / og:url link-preview tags.
+  # image can be a full URL or a path under app/static/.
+  url: "https://alymatar.github.io/"
+  image: "https://alymatar.github.io/static/img/aly-matar.jpg"
 
 profile:
   name: "Aly Tamer Matar"
@@ -82,14 +83,6 @@ projects:
     period: "Jul 2024 – Aug 2024"
     status: "private"
     note: "The code belongs to the client and is not public"
-
-  - slug: "fastapi-project"
-    title: "FastAPI project"
-    summary: "A new backend project built with FastAPI. Coming soon."
-    highlights: []
-    tags: ["Python", "FastAPI"]
-    status: "coming_soon"
-    note: "In progress"
 
 experience:
   - role: "Computer Science & Game Development Tutor"

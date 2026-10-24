@@ -1,12 +1,17 @@
-"""Export the site as a static snapshot (HTML, assets and the JSON API as files).
+"""Export the site as a static snapshot for GitHub Pages.
 
 Usage:
     python scripts/export_static.py [output_dir]     # default: dist/
 
-The live site is this snapshot, served by a static host. It renders the
+The live site (https://alymatar.github.io/) is this snapshot. It renders the
 real FastAPI app with its test client, so the pages are exactly what
-`uvicorn app.main:app` serves. The JSON API is written as .json files, and a
-tiny `_worker.js` maps the extension-less /api/... URLs onto them.
+`uvicorn app.main:app` serves. GitHub Pages serves plain files only, so the
+JSON API is written as files at the .json paths the app also answers:
+api/health.json, api/projects.json and api/projects/<slug>.json. The static
+API docs page reads an openapi.json whose paths point at those files.
+
+The output folder is what goes to the root of the alymatar.github.io repo:
+it carries an empty .nojekyll (serve files as they are) and a 404.html.
 """
 
 from __future__ import annotations
@@ -27,41 +32,6 @@ from app.main import APP_DIR, app  # noqa: E402
 
 BASE = "http://testserver"
 
-WORKER_JS = """// Serves the static snapshot. The JSON API is pre-rendered as .json files;
-// this maps the extension-less /api/... URLs onto them, like the FastAPI app.
-const JSON_HEADERS = {
-  "content-type": "application/json; charset=utf-8",
-  "access-control-allow-origin": "*",
-  "cache-control": "public, max-age=300",
-};
-
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
-    let path = url.pathname.replace(/\\/+$/, "") || "/";
-    const isApi =
-      path === "/api/health" ||
-      path === "/api/projects" ||
-      /^\\/api\\/projects\\/[a-z0-9-]+$/.test(path);
-    if (isApi) {
-      const asset = await env.ASSETS.fetch(new URL(path + ".json", url.origin));
-      if (asset.ok) {
-        return new Response(asset.body, { status: 200, headers: JSON_HEADERS });
-      }
-      const detail = path.startsWith("/api/projects/") ? "Project not found" : "Not Found";
-      return new Response(JSON.stringify({ detail }), { status: 404, headers: JSON_HEADERS });
-    }
-    const response = await env.ASSETS.fetch(request);
-    if (response.status !== 404) return response;
-    const page = await env.ASSETS.fetch(new URL("/404.html", url.origin));
-    return new Response(page.body, {
-      status: 404,
-      headers: { "content-type": "text/html; charset=utf-8" },
-    });
-  },
-};
-"""
-
 DOCS_HTML = """<!doctype html>
 <html lang="en">
 <head>
@@ -74,7 +44,7 @@ DOCS_HTML = """<!doctype html>
 <body>
   <p style="font:14px system-ui,sans-serif;margin:12px 20px">
     <a href="/">&larr; Back to the portfolio</a> &middot; This is a static snapshot of the API:
-    GET requests work. <a href="{source}">Source on GitHub</a>
+    each endpoint is a .json file. <a href="{source}">Source on GitHub</a>
   </p>
   <div id="swagger-ui"></div>
   <script src="https://cdn.jsdelivr.net/npm/swagger-ui-dist@5/swagger-ui-bundle.js"></script>
@@ -101,6 +71,16 @@ def _write_json(path: Path, data) -> None:
     path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
+def _static_openapi(schema: dict) -> dict:
+    """The app's OpenAPI schema with every path pointing at its .json file."""
+    schema = dict(schema)
+    schema["paths"] = {f"{path}.json": spec for path, spec in schema["paths"].items()}
+    schema.setdefault("info", {})["description"] = (
+        "Static copy of the portfolio's JSON API on GitHub Pages: each endpoint is a .json file."
+    )
+    return schema
+
+
 def export(out: Path) -> Path:
     out = Path(out)
     if out.exists():
@@ -118,13 +98,13 @@ def export(out: Path) -> Path:
     shutil.copytree(APP_DIR / "static", out / "static")
     shutil.copy2(APP_DIR / "static" / "favicon.svg", out / "favicon.svg")
 
-    # JSON API as files
+    # JSON API as files, at the same .json paths the app answers
     api = out / "api"
-    _write_json(api / "health.json", _get(client, "/api/health").json())
-    _write_json(api / "projects.json", _get(client, "/api/projects").json())
+    _write_json(api / "health.json", _get(client, "/api/health.json").json())
+    _write_json(api / "projects.json", _get(client, "/api/projects.json").json())
     for project in content.projects:
-        _write_json(api / "projects" / f"{project.slug}.json", _get(client, f"/api/projects/{project.slug}").json())
-    _write_json(api / "openapi.json", _get(client, "/api/openapi.json").json())
+        _write_json(api / "projects" / f"{project.slug}.json", _get(client, f"/api/projects/{project.slug}.json").json())
+    _write_json(api / "openapi.json", _static_openapi(_get(client, "/api/openapi.json").json()))
     docs = api / "docs" / "index.html"
     docs.parent.mkdir(parents=True, exist_ok=True)
     docs.write_text(
@@ -132,14 +112,8 @@ def export(out: Path) -> Path:
         encoding="utf-8",
     )
 
-    (out / "_worker.js").write_text(WORKER_JS, encoding="utf-8")
-    _write_json(out / "tab-site.json", {
-            "kind": "worker",
-            "entry": "_worker.js",
-            # The Worker handles 404s itself, so browser navigations to
-            # /api/... reach it instead of the host's built-in 404 page.
-            "worker": {"not_found_handling": "none", "html_handling": "auto-trailing-slash"},
-        })
+    # GitHub Pages: serve the files as they are, without a Jekyll build.
+    (out / ".nojekyll").write_text("", encoding="utf-8")
     return out
 
 

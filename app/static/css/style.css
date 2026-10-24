@@ -179,13 +179,11 @@ ul { padding-left: 1.2em; }
   padding: 4px 9px; border-radius: 999px; background: var(--chip); color: var(--muted); border: 1px solid var(--border);
 }
 .badge-public { background: var(--accent-soft); color: var(--accent-strong); border-color: transparent; }
-.badge-soon { background: transparent; border-style: dashed; }
 .period { color: var(--muted); font-size: .88rem; font-weight: 500; margin-bottom: .6em; }
 .ticks { list-style: none; padding: 0; margin: 0 0 18px; }
 .ticks li { position: relative; padding-left: 22px; margin-bottom: 6px; font-size: .95rem; }
 .ticks li::before { content: ""; position: absolute; left: 2px; top: .6em; width: 8px; height: 8px; border-radius: 2px; background: var(--accent); }
 .project-foot { margin-top: auto; padding-top: 18px; }
-.coming-soon { grid-column: 1 / -1; border-style: dashed; box-shadow: none; background: transparent; }
 
 .timeline { list-style: none; padding: 0; margin: 0; border-left: 2px solid var(--border); }
 .timeline > li { position: relative; padding: 0 0 26px 26px; }

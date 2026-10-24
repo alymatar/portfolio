@@ -50,12 +50,21 @@ def list_projects() -> list[Project]:
 
 
 @app.get("/api/projects/{slug}", response_model=Project, tags=["api"])
+# The .json route is registered first, so "<slug>.json" is never read as a slug.
+@app.get("/api/projects/{slug}.json", response_model=Project, include_in_schema=False)
 def get_project(slug: str) -> Project:
     """One project by its slug."""
     for project in load_content().projects:
         if project.slug == slug:
             return project
     raise HTTPException(status_code=404, detail="Project not found")
+
+
+# The same endpoints with a .json suffix. The static copy of the site on
+# GitHub Pages can only serve files, so its API lives at these paths; the app
+# answers them too, so the links on the page work in both places.
+app.add_api_route("/api/health.json", health, methods=["GET"], include_in_schema=False)
+app.add_api_route("/api/projects.json", list_projects, methods=["GET"], response_model=list[Project], include_in_schema=False)
 
 
 @app.exception_handler(StarletteHTTPException)

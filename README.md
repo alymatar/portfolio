@@ -2,7 +2,7 @@
 
 [![CI](https://github.com/alymatar/portfolio/actions/workflows/ci.yml/badge.svg)](https://github.com/alymatar/portfolio/actions/workflows/ci.yml)
 
-**Live: https://alymatar.sites.tab.bot**
+**Live: https://alymatar.github.io/**
 
 My personal portfolio site, built as a small **FastAPI** app. I'm a junior Python backend developer, so instead of a static page I made the portfolio itself a backend project: server-rendered pages with **Jinja2**, a small **JSON API**, content validated with **Pydantic**, **pytest** tests, a **Docker** image and **GitHub Actions** CI.
 
@@ -19,6 +19,7 @@ My personal portfolio site, built as a small **FastAPI** app. I'm a junior Pytho
   - `GET /api/health`: health check (used by Docker and CI)
   - `GET /api/projects`: all projects
   - `GET /api/projects/{slug}`: one project
+  - The same endpoints also answer with a `.json` suffix (`/api/projects.json`), which is how the static live site serves them
   - Interactive API docs at `/api/docs`
 - "Download CV" button serving the PDF from `app/static/`
 - HTML 404 page for browsers, JSON errors for the API
@@ -73,7 +74,7 @@ The tests check that the home page and its sections render, every project appear
 Everything on the page comes from **`content.yaml`**: name, headline, About, skills, projects, experience, education, languages and contact links. Edit the text there; no code changes needed.
 
 - Content is loaded once when the app starts, so **restart** the app after editing (`docker compose up --build`, or just save with `uvicorn --reload` running).
-- To add a project, copy one of the entries under `projects:`. `status` is one of `public` (shows a "View code" button when `repo_url` is set), `private` (client work, shows `note`) or `coming_soon`.
+- To add a project, copy one of the entries under `projects:`. `status` is `public` (shows a "View code" button when `repo_url` is set) or `private` (client work, shows `note`).
 - The photo is `app/static/img/aly-matar.webp` (with a `.jpg` fallback); replace both files to change it.
 - The graduation photo in Education is `app/static/img/aly-graduation.webp` (with a `.jpg` fallback); its paths and alt text are under `education[].photo` in `content.yaml`.
 - The CV is `app/static/Aly_Matar_CV.pdf`; replace the file to update it.
@@ -83,13 +84,15 @@ You can also point the app at another content file: `CONTENT_PATH=/path/to/conte
 
 ## Live site
 
-The live site at https://alymatar.sites.tab.bot is a static snapshot of this app. The export script renders the real FastAPI pages with its test client and writes the JSON API out as files:
+The live site at https://alymatar.github.io/ is a static snapshot of this app, hosted on GitHub Pages from the [alymatar.github.io](https://github.com/alymatar/alymatar.github.io) repo. The export script renders the real FastAPI pages with its test client and writes the JSON API out as files:
 
 ```bash
 python scripts/export_static.py   # writes dist/
 ```
 
-`dist/` holds `index.html`, `404.html`, the static assets, `api/*.json` and a tiny `_worker.js` that serves `/api/health`, `/api/projects` and `/api/projects/{slug}` as JSON at the same URLs as the app. `/api/docs` is a Swagger UI page reading the exported `api/openapi.json`. The link-preview tags (`og:image`, `og:url`) use `site.url` from `content.yaml`.
+`dist/` holds `index.html`, `404.html`, an empty `.nojekyll`, the static assets and the API as files: `api/health.json`, `api/projects.json` and `api/projects/{slug}.json`. `/api/docs/` is a Swagger UI page reading the exported `api/openapi.json`, whose paths point at those files. The link-preview tags (`og:image`, `og:url`) use `site.url` and `site.image` from `content.yaml`.
+
+To update the live site: run the export, copy the contents of `dist/` to the root of the `alymatar.github.io` repo and push to `main`.
 
 ## Project structure
 
@@ -109,7 +112,7 @@ portfolio/
 │       ├── img/             # profile and graduation photos
 │       ├── favicon.svg
 │       └── Aly_Matar_CV.pdf
-├── scripts/export_static.py # builds the static snapshot for the live site
+├── scripts/export_static.py # builds the static snapshot for GitHub Pages
 ├── tests/test_app.py        # pytest tests
 ├── docs/                    # screenshots for this README
 ├── content.yaml             # all site text: edit this

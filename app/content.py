@@ -18,10 +18,27 @@ class Site(BaseModel):
     title: str
     description: str
     source_url: Optional[str] = None
-    # Public address of the live site, used for absolute link-preview URLs.
+    # Public address of the live site, used for the canonical link and
+    # absolute link-preview URLs.
     url: Optional[str] = None
-    # Link-preview image, relative to app/static/.
+    # Link-preview image: a full URL, or a path relative to app/static/.
     image: Optional[str] = None
+
+    @property
+    def page_url(self) -> Optional[str]:
+        """The live site's address, always with exactly one trailing slash."""
+        return self.url.rstrip("/") + "/" if self.url else None
+
+    @property
+    def image_url(self) -> Optional[str]:
+        """Absolute URL of the link-preview image, or None."""
+        if not self.image:
+            return None
+        if self.image.startswith(("http://", "https://")):
+            return self.image
+        if not self.url:
+            return None
+        return f"{self.page_url}static/{self.image.lstrip('/')}"
 
 
 class Profile(BaseModel):
@@ -51,7 +68,7 @@ class Project(BaseModel):
     tags: list[str] = Field(default_factory=list)
     repo_url: Optional[str] = None
     period: Optional[str] = None
-    status: Literal["public", "private", "coming_soon"] = "public"
+    status: Literal["public", "private"] = "public"
     note: Optional[str] = None
 
 

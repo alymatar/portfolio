@@ -104,22 +104,81 @@ def test_graduation_photo_is_served_and_shown():
 def test_link_preview_tags_use_the_live_url():
     html = client.get("/").text
     site = load_content().site
+    assert site.page_url == "https://alymatar.github.io/"
     assert f'<meta property="og:title" content="{escape(site.title)}">' in html
-    assert f'content="{site.url}/static/{site.image}"' in html
+    assert '<meta property="og:url" content="https://alymatar.github.io/">' in html
+    assert '<link rel="canonical" href="https://alymatar.github.io/">' in html
+    assert '<meta property="og:image" content="https://alymatar.github.io/static/img/aly-matar.jpg">' in html
 
 
-def test_static_export(tmp_path):
+def test_preview_image_path_relative_to_static():
+    from app.content import Site
+
+    site = Site(title="t", description="d", url="https://example.org", image="img/a.jpg")
+    assert site.page_url == "https://example.org/"
+    assert site.image_url == "https://example.org/static/img/a.jpg"
+
+
+def test_api_answers_at_the_json_paths_too():
+    """The page links to the .json paths, which is where the static site has its API."""
+    assert client.get("/api/health.json").json() == client.get("/api/health").json()
+    assert client.get("/api/projects.json").json() == client.get("/api/projects").json()
+    slug = load_content().projects[0].slug
+    response = client.get(f"/api/projects/{slug}.json")
+    assert response.status_code == 200
+    assert response.json()["slug"] == slug
+    assert client.get("/api/projects/does-not-exist.json").status_code == 404
+    html = client.get("/").text
+    assert 'href="/api/projects.json"' in html
+    assert 'href="/api/docs/"' in html
+
+
+def test_no_coming_soon_card():
+    html = client.get("/").text
+    assert "coming soon" not in html.lower()
+    projects = load_content().projects
+    assert len(projects) == 4
+    assert all(p.status in ("public", "private") for p in projects)
+
+
+def test_no_tab_bot_address_anywhere():
+    from pathlib import Path
+
+    root = Path(__file__).resolve().parent.parent
+    skip = {".git", ".venv", "venv", "dist", "__pycache__", ".pytest_cache"}
+    needle = "tab" + ".bot"
+    for path in root.rglob("*"):
+        if path.is_file() and not skip.intersection(path.relative_to(root).parts):
+            if path.suffix in {".py", ".html", ".css", ".js", ".yaml", ".yml", ".md", ".txt", ".toml", ".ini"}:
+                assert needle not in path.read_text(encoding="utf-8", errors="ignore"), path
+
+
+def test_static_export_for_github_pages(tmp_path):
     import json
 
     from scripts.export_static import export
 
     out = export(tmp_path / "site")
-    for name in ("index.html", "404.html", "_worker.js", "tab-site.json", "static/Aly_Matar_CV.pdf",
-                 "api/health.json", "api/projects.json", "api/docs/index.html"):
+    for name in ("index.html", "404.html", ".nojekyll", "favicon.svg", "static/Aly_Matar_CV.pdf",
+                 "static/img/aly-matar.jpg", "static/img/aly-graduation.jpg",
+                 "api/health.json", "api/projects.json", "api/openapi.json", "api/docs/index.html"):
         assert (out / name).is_file(), name
+    assert (out / ".nojekyll").read_bytes() == b""
+    assert not (out / "_worker.js").exists()
+    assert not (out / "tab-site.json").exists()
+
     index = (out / "index.html").read_text(encoding="utf-8")
     assert "http://testserver" not in index
     assert 'href="/static/Aly_Matar_CV.pdf"' in index
+    assert 'href="/api/projects.json"' in index
+    assert "Page not found" in (out / "404.html").read_text(encoding="utf-8")
+
+    assert json.loads((out / "api/health.json").read_text(encoding="utf-8"))["status"] == "ok"
     projects = json.loads((out / "api/projects.json").read_text(encoding="utf-8"))
+    assert len(projects) == 4
     for project in projects:
-        assert (out / "api/projects" / f"{project['slug']}.json").is_file()
+        single = json.loads((out / "api/projects" / f"{project['slug']}.json").read_text(encoding="utf-8"))
+        assert single == project
+
+    openapi = json.loads((out / "api/openapi.json").read_text(encoding="utf-8"))
+    assert set(openapi["paths"]) == {"/api/health.json", "/api/projects.json", "/api/projects/{slug}.json"}
