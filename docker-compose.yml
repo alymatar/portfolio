@@ -1,0 +1,10 @@
+services:
+  web:
+    build: .
+    image: aly-portfolio:latest
+    ports:
+      - "8000:8000"
+    # Uncomment to edit content.yaml without rebuilding (restart the container to reload):
+    # volumes:
+    #   - ./content.yaml:/app/content.yaml:ro
+    restart: unless-stopped

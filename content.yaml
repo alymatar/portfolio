@@ -1,0 +1,147 @@
+# All text on the site lives in this file.
+# Edit it, then restart the app (or `docker compose up --build`) to see the changes.
+
+site:
+  title: "Aly Tamer Matar · Junior Python Backend Developer"
+  description: "Portfolio of Aly Tamer Matar, a junior Python backend developer building REST APIs with Flask, FastAPI and PostgreSQL."
+  source_url: "https://github.com/alymatar/portfolio"
+
+profile:
+  name: "Aly Tamer Matar"
+  initials: "AM"
+  headline: "Junior Python Backend Developer"
+  location: "Cairo, Egypt"
+  availability: "Open to remote work and relocation"
+  intro: "I build REST APIs with Python, Flask and PostgreSQL: authentication, role-based access control, data models and tests."
+
+# The CV file lives in app/static/. Replace the PDF there to update it.
+cv:
+  file: "Aly_Matar_CV.pdf"
+  download_name: "Aly_Matar_CV.pdf"
+
+about:
+  - "I'm a junior Python backend developer. I build REST APIs with Flask and PostgreSQL: authentication, role-based access control, data models and tests."
+  - "I've built Flask + PostgreSQL backends for a logistics company and for an Arabic language-course website, did a remote REST API internship at Cloudilic, and taught Python at Kodland. Right now I'm building a project with FastAPI."
+  - "I graduated in 2026 with a BSc in Software Engineering from Bauman Moscow State Technical University (Kaluga Branch). I'm looking for a junior backend or software engineering role, remote or with relocation."
+
+skills:
+  - group: "Languages"
+    items: ["Python", "SQL", "JavaScript", "TypeScript", "C++", "C#", "Java"]
+  - group: "Backend"
+    items: ["Flask", "FastAPI", "REST APIs", "JWT authentication", "pytest"]
+  - group: "Databases"
+    items: ["PostgreSQL", "SQLAlchemy", "pgAdmin", "Firebase"]
+  - group: "Tools"
+    items: ["Docker", "Git", "GitHub", "Linux", "Postman", "Insomnia", "VS Code"]
+
+projects:
+  - slug: "flask-auth-api"
+    title: "Flask Authentication & Authorization API"
+    summary: "A REST API with authentication and role-based access control built from scratch, without Flask-Login or Flask-JWT."
+    highlights:
+      - "JWT Bearer tokens and database-backed sessions, bcrypt password hashing"
+      - "Per-role, per-resource and owner-based permissions, plus an admin API"
+      - "pytest test suite that runs in GitHub Actions"
+    tags: ["Python", "Flask", "SQLAlchemy", "PostgreSQL", "JWT", "pytest"]
+    repo_url: "https://github.com/alymatar/Flask-authorization-and-authentication"
+    status: "public"
+
+  - slug: "expense-analytics-cli"
+    title: "Expense Analytics CLI"
+    summary: "A Python command-line expense tracker with category analytics and CSV storage."
+    highlights:
+      - "Add expenses with input validation, then view totals per category"
+      - "Filter by category; data persists in a local CSV file"
+      - "Standard library only, with 11 unittest tests"
+    tags: ["Python", "CLI", "CSV", "unittest"]
+    repo_url: "https://github.com/alymatar/expense-analytics-cli"
+    status: "public"
+
+  - slug: "logistics-platform"
+    title: "Logistics Company Platform"
+    summary: "Accounting and data-control system for a logistics company: a Flask backend with PostgreSQL behind a React website and React Native apps."
+    highlights:
+      - "Flask backend and PostgreSQL database for the company's accounting and data control"
+      - "Driver app that takes photos and scans data via OCR or QR codes"
+      - "Captured data appears on the website, where an administrator edits and approves it"
+    tags: ["Flask", "PostgreSQL", "React", "React Native", "OCR", "QR codes"]
+    period: "Aug 2024 – Sep 2024"
+    status: "private"
+    note: "The code belongs to the client and is not public"
+
+  - slug: "arabic-courses-site"
+    title: "Arabic Language Courses Website"
+    summary: "Course website with a React frontend, a Flask backend and a PostgreSQL database."
+    highlights:
+      - "User login"
+      - "Course materials and paid sections"
+    tags: ["Flask", "PostgreSQL", "React"]
+    period: "Jul 2024 – Aug 2024"
+    status: "private"
+    note: "The code belongs to the client and is not public"
+
+  - slug: "fastapi-project"
+    title: "FastAPI project"
+    summary: "A new backend project built with FastAPI. Coming soon."
+    highlights: []
+    tags: ["Python", "FastAPI"]
+    status: "coming_soon"
+    note: "In progress"
+
+experience:
+  - role: "Computer Science & Game Development Tutor"
+    company: "Kodland"
+    period: "Jul 2025 – Jul 2026"
+    points:
+      - "Taught Python programming and Roblox Studio game development."
+      - "Created lesson plans and hands-on projects, adapting to each student's pace."
+
+  - role: "Co-Leader, AI Unit Operations"
+    company: "Rouge International & Rouge Ventures"
+    period: "Dec 2024 – Jul 2025"
+    points:
+      - "Promoted to co-leader; led system development, AI integrations and cyber-related functionality, and managed the team."
+
+  - role: "Web Development Operations Associate Intern"
+    company: "Rouge International & Rouge Ventures"
+    period: "Nov 2024 – Dec 2024"
+    points:
+      - "Designed and developed websites on Wix in the Online Design Unit, integrating AI tools and APIs and improving UX/UI."
+
+  - role: "Full-Stack Developer (Part-time)"
+    company: "Logistics company"
+    period: "Aug 2024 – Sep 2024"
+    points:
+      - "Built a website (React) and a React Native mobile app for the company's accounting and data control, with a Flask backend and a PostgreSQL database."
+      - "Built a driver app that takes photos and scans data via OCR or QR codes; the data then appears on the website, where an administrator edits and approves it."
+
+  - role: "Full-Stack Developer (Part-time)"
+    company: "Arabic language courses website"
+    period: "Jul 2024 – Aug 2024"
+    points:
+      - "Built the course website: React frontend, Flask backend (login, course materials, paid sections) and PostgreSQL database."
+
+  - role: "REST API Intern"
+    company: "Cloudilic (remote)"
+    period: "Jul 2024 – Aug 2024"
+    points:
+      - "Built REST APIs and researched the latest AI-based APIs."
+
+education:
+  - degree: "BSc in Software Engineering"
+    school: "Bauman Moscow State Technical University (Kaluga Branch)"
+    period: "Graduated 2026"
+    details: "Relevant courses: Software Development, Web Development, Databases, OOP, Data Structures and Algorithms, Operating Systems, Computer Networks, Android Development."
+
+languages:
+  - name: "Arabic"
+    level: "Fluent"
+  - name: "English"
+    level: "Advanced"
+  - name: "Russian"
+    level: "Intermediate"
+
+contact:
+  email: "matterali130@gmail.com"
+  linkedin: "https://www.linkedin.com/in/alymatar"
+  github: "https://github.com/alymatar"

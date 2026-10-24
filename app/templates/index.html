@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+{% block content %}
+<section class="hero">
+  <div class="container hero-grid">
+    <div class="hero-text">
+      <picture class="avatar">
+        <source srcset="{{ url_for('static', path='img/aly-matar.webp') }}" type="image/webp">
+        <img src="{{ url_for('static', path='img/aly-matar.jpg') }}" alt="Photo of {{ c.profile.name }}" width="168" height="168">
+      </picture>
+      <p class="eyebrow">{{ icon.pin() }} {{ c.profile.location }} · {{ c.profile.availability }}</p>
+      <h1>{{ c.profile.name }}</h1>
+      <p class="headline">{{ c.profile.headline }}</p>
+      <p class="lead">{{ c.profile.intro }}</p>
+      <div class="actions">
+        <a class="btn btn-primary" href="{{ url_for('static', path=c.cv.file) }}" download="{{ c.cv.download_name }}">{{ icon.download() }} Download CV</a>
+        <a class="btn" href="#projects">See my projects</a>
+        <a class="btn" href="mailto:{{ c.contact.email }}">{{ icon.mail() }} Email me</a>
+      </div>
+      <ul class="social" aria-label="Profiles">
+        <li><a href="{{ c.contact.github }}" aria-label="GitHub">{{ icon.github() }} GitHub</a></li>
+        <li><a href="{{ c.contact.linkedin }}" aria-label="LinkedIn">{{ icon.linkedin() }} LinkedIn</a></li>
+      </ul>
+    </div>
+    <div class="terminal" aria-label="Example request to this site's API">
+      <div class="terminal-bar"><span></span><span></span><span></span><em>this site has an API</em></div>
+<pre><code><span class="t-prompt">$</span> curl /api/health
+{"status": "ok", "version": "{{ version }}"}
+
+<span class="t-prompt">$</span> curl /api/projects
+[
+  {"slug": "{{ c.projects[0].slug }}",
+   "tags": ["Flask", "JWT", ...]},
+  ...
+]</code></pre>
+      <a class="terminal-link" href="/api/projects">Try it: /api/projects →</a>
+    </div>
+  </div>
+</section>
+
+<section id="about" class="section">
+  <div class="container narrow">
+    <h2>About</h2>
+    {% for paragraph in c.about %}<p>{{ paragraph }}</p>{% endfor %}
+  </div>
+</section>
+
+<section id="skills" class="section alt">
+  <div class="container">
+    <h2>Skills</h2>
+    <div class="skills-grid">
+      {% for group in c.skills %}
+      <div class="card skill-card">
+        <h3>{{ group.group }}</h3>
+        <ul class="chips">{% for item in group["items"] %}<li>{{ item }}</li>{% endfor %}</ul>
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="projects" class="section">
+  <div class="container">
+    <h2>Projects</h2>
+    <div class="projects-grid">
+      {% for p in c.projects %}
+      <article class="card project-card{% if p.status == 'coming_soon' %} coming-soon{% endif %}">
+        <div class="project-head">
+          <h3>{{ p.title }}</h3>
+          {% if p.status == "public" %}<span class="badge badge-public">Open source</span>
+          {% elif p.status == "private" %}<span class="badge">Client work</span>
+          {% else %}<span class="badge badge-soon">Coming soon</span>{% endif %}
+        </div>
+        {% if p.period %}<p class="period">{{ p.period }}</p>{% endif %}
+        <p>{{ p.summary }}</p>
+        {% if p.highlights %}
+        <ul class="ticks">{% for h in p.highlights %}<li>{{ h }}</li>{% endfor %}</ul>
+        {% endif %}
+        <ul class="chips small">{% for t in p.tags %}<li>{{ t }}</li>{% endfor %}</ul>
+        <div class="project-foot">
+          {% if p.repo_url %}
+          <a class="btn btn-small" href="{{ p.repo_url }}">{{ icon.github() }} View code</a>
+          {% elif p.note %}
+          <span class="muted small-text">{{ p.note }}</span>
+          {% endif %}
+        </div>
+      </article>
+      {% endfor %}
+    </div>
+  </div>
+</section>
+
+<section id="experience" class="section alt">
+  <div class="container narrow">
+    <h2>Experience</h2>
+    <ol class="timeline">
+      {% for job in c.experience %}
+      <li>
+        <p class="period">{{ job.period }}</p>
+        <h3>{{ job.role }} <span class="at">· {{ job.company }}</span></h3>
+        <ul>{% for point in job.points %}<li>{{ point }}</li>{% endfor %}</ul>
+      </li>
+      {% endfor %}
+    </ol>
+  </div>
+</section>
+
+<section id="education" class="section">
+  <div class="container narrow two-col">
+    <div>
+      <h2>Education</h2>
+      {% for e in c.education %}
+      <div class="card">
+        <h3>{{ e.degree }}</h3>
+        <p class="school">{{ e.school }}</p>
+        <p class="period">{{ e.period }}</p>
+        {% if e.details %}<p class="muted">{{ e.details }}</p>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    <div>
+      <h2>Languages</h2>
+      <ul class="lang-list">
+        {% for l in c.languages %}
+        <li class="card"><strong>{{ l.name }}</strong><span class="muted">{{ l.level }}</span></li>
+        {% endfor %}
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="contact" class="section alt">
+  <div class="container narrow contact">
+    <h2>Contact</h2>
+    <p>I'm looking for a junior backend or software engineering role, remote or with relocation. The fastest way to reach me is email.</p>
+    <div class="contact-links">
+      <a class="btn btn-primary" href="mailto:{{ c.contact.email }}">{{ icon.mail() }} {{ c.contact.email }}</a>
+      <a class="btn" href="{{ url_for('static', path=c.cv.file) }}" download="{{ c.cv.download_name }}">{{ icon.download() }} Download CV</a>
+      <a class="btn" href="{{ c.contact.linkedin }}">{{ icon.linkedin() }} LinkedIn</a>
+      <a class="btn" href="{{ c.contact.github }}">{{ icon.github() }} GitHub</a>
+    </div>
+  </div>
+</section>
+{% endblock %}
